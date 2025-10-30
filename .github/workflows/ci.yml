@@ -42,3 +42,6 @@ jobs:
 
       - name: Style check
         run: npm run format:check
+
+      - name: Eslint check
+        run: npm run lint
