@@ -16,6 +16,7 @@ jobs:
       IMAGE: notely-ar-repo
       TAG: v1
       REGION: europe-central2
+      PROJECT_ID: notely-477020
 
     steps:
       - name: Check out code
@@ -45,4 +46,4 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud builds submit --tag $REGION-docker.pkg.dev/${{secrets.project_id}}/$REPOSITORY/$IMAGE:$TAG .
+          gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG .
