@@ -42,4 +42,4 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud builds submit --tag $REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/$REPOSITORY/$IMAGE:$TAG .
+          gcloud builds submit --tag $REGION-docker.pkg.dev/$GCP_PROJECT/$REPOSITORY/$IMAGE:$TAG .
