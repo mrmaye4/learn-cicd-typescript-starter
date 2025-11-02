@@ -1,4 +1,4 @@
-name: cd.yml
+name: cd
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
-    end:
+    env:
       DATABASE_URL: file:./cicd.db
       PORT: 8080
 
