@@ -1,0 +1,54 @@
+name: cd
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: file:./cicd.db
+      PORT: 8080
+      REPOSITORY: notely-ar-repo
+      IMAGE: notely-ar-repo
+      TAG: latest
+      REGION: europe-central2
+      PROJECT_ID: notely-477020
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test build
+        run: npm run build
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud auth list --filter=status:ACTIVE --format="value(account)"'
+
+      - name: 'Check repo'
+        run: gcloud artifacts repositories list --project notely-477020 --location europe-central2
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud builds submit \
+            --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG \
+            --gcs-source-staging-dir=gs://notely-477020_cloudbuild/source
