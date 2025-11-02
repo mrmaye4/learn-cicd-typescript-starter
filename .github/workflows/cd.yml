@@ -15,6 +15,7 @@ jobs:
       REPOSITORY: notely-ar-repo
       IMAGE: notely-ar-repo
       TAG: latest
+      REGION: europe-central2
 
     steps:
       - name: Check out code
