@@ -39,24 +39,24 @@ jobs:
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v3
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: ${{ secrets.project_id }}
 
       - name: Configure gcloud
         run: |
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set project ${{ secrets.project_id }}
           gcloud config set compute/region $REGION
 
       # 8. Строим и пушим Docker-образ
       - name: Build Docker image
         run: |
-          docker build -t $REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY/$IMAGE:$TAG .
-          docker push $REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY/$IMAGE:$TAG
+          docker build -t $REGION-docker.pkg.dev/${{ secrets.project_id }}/$REPOSITORY/$IMAGE:$TAG .
+          docker push $REGION-docker.pkg.dev/${{ secrets.project_id }}/$REPOSITORY/$IMAGE:$TAG
 
       # 9. Деплой в Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy $IMAGE \
-            --image $REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY/$IMAGE:$TAG \
+            --image $REGION-docker.pkg.dev/${{ secrets.project_id }}/$REPOSITORY/$IMAGE:$TAG \
             --region $REGION \
             --platform managed \
             --allow-unauthenticated
