@@ -12,6 +12,9 @@ jobs:
     env:
       DATABASE_URL: file:./cicd.db
       PORT: 8080
+      REPOSITORY: notely-ar-repo
+      IMAGE: notely-ar-repo
+      TAG: latest
 
     steps:
       - name: Check out code
@@ -27,3 +30,33 @@ jobs:
 
       - name: Test build
         run: npm run build
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set compute/region $REGION
+
+      # 8. Строим и пушим Docker-образ
+      - name: Build Docker image
+        run: |
+          docker build -t $REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY/$IMAGE:$TAG .
+          docker push $REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY/$IMAGE:$TAG
+
+      # 9. Деплой в Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy $IMAGE \
+            --image $REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY/$IMAGE:$TAG \
+            --region $REGION \
+            --platform managed \
+            --allow-unauthenticated
