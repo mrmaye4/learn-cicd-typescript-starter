@@ -14,7 +14,7 @@ jobs:
       PORT: 8080
       REPOSITORY: notely-ar-repo
       IMAGE: notely-ar-repo
-      TAG: v1
+      TAG: latest
       REGION: europe-central2
       PROJECT_ID: notely-477020
 
@@ -51,4 +51,4 @@ jobs:
         run: |
           gcloud builds submit \
             --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG \
-            --gcs-source-staging-dir=gs://$PROJECT_ID_cloudbuild/source
+            --gcs-source-staging-dir=gs://notely-477020_cloudbuild/source
