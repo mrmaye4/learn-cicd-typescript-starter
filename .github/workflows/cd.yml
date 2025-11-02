@@ -44,6 +44,9 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud auth list --filter=status:ACTIVE --format="value(account)"'
 
+      - name: 'Check repo'
+        run: gcloud artifacts repositories list --project notely-477020 --location europe-central2
+
       - name: Deploy to Cloud Run
         run: |
           gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG .
